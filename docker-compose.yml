@@ -1,5 +1,5 @@
 moodle:
-  build: .
+  image: mathcunha/moodle:3
   ports:
    - "80:80"
   links:

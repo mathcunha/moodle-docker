@@ -3,7 +3,7 @@
 # Based on httpd Image
 ############################################################
 
-FROM httpd:2.4
+FROM debian:jessie-backports
 
 # Environment variables
 ENV PHP_INI=/etc/php5/apache2/php.ini
@@ -27,7 +27,7 @@ RUN sed -i "s/short_open_tag = .*/short_open_tag = On/" $PHP_INI && \
     sed -i "s/display_errors = .*/display_errors = Off/" $PHP_INI && \
     sed -i "s/display_startup_errors = .*/display_startup_errors = Off/" $PHP_INI && \
     sed -i "s/post_max_size = .*/post_max_size = 256M/" $PHP_INI && \
-    sed -i "s/upload_max_filesize = .*/upload_max_filesize = 32M/" $PHP_INI && \
+    sed -i "s/upload_max_filesize = .*/upload_max_filesize = 256M/" $PHP_INI && \
     sed -i "s/max_file_uploads = .*/max_file_uploads = 10/" $PHP_INI && \
     sed -i "s/error_reporting = .*/error_reporting = E_ALL \& ~E_DEPRECATED \& ~E_STRICT/" $PHP_INI
 
@@ -35,6 +35,11 @@ RUN sed -i "s/short_open_tag = .*/short_open_tag = On/" $PHP_INI && \
 ADD moodle-3.3.7.tgz /var/www/html
 RUN chown -R root.www-data /var/www/html/moodle
 RUN chmod 777 /var/www/html/moodle
+RUN mkdir /var/www/moodledata
+RUN chown -R root.www-data /var/www/moodledata
+RUN chmod 777 /var/www/moodledata
+
+EXPOSE 80
 
 CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
 
