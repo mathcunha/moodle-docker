@@ -1,12 +1,12 @@
 ############################################################
-# Dockerfile to install moodle 3.3.x
-# Based on httpd Image
+# Dockerfile to install moodle 3.5.1
+# Based on debian image
 ############################################################
 
-FROM debian:jessie-backports
+FROM debian:9
 
 # Environment variables
-ENV PHP_INI=/etc/php5/apache2/php.ini
+ENV PHP_INI=/etc/php/7.0/apache2/php.ini
 
 RUN echo '#!/bin/bash' > /usr/local/bin/configure-moodle.sh
 
@@ -16,9 +16,11 @@ RUN echo '#!/bin/bash' > /usr/local/bin/configure-moodle.sh
 
 #setting up apache
 RUN echo 'apt-get update' >> /usr/local/bin/configure-moodle.sh
-RUN echo 'apt-get install -y php5-curl php5-mysql libapache2-mod-php5 mysql-client php5-gd php5-intl php-xml-rpc zip' >> /usr/local/bin/configure-moodle.sh
+RUN echo 'apt-get install -y php7.0-curl php7.0-mysql libapache2-mod-php7.0 mysql-client php7.0-gd php7.0-intl php7.0-xml php7.0-xmlrpc php7.0-soap php7.0-zip php7.0-mbstring zip' >> /usr/local/bin/configure-moodle.sh
+RUN echo 'apt-get autoremove -y' >> /usr/local/bin/configure-moodle.sh
 RUN echo 'apt-get clean' >> /usr/local/bin/configure-moodle.sh
 RUN chmod 777 /usr/local/bin/configure-moodle.sh
+RUN cat /usr/local/bin/configure-moodle.sh
 RUN /usr/local/bin/configure-moodle.sh
 
 # php.ini configs
@@ -32,7 +34,7 @@ RUN sed -i "s/short_open_tag = .*/short_open_tag = On/" $PHP_INI && \
     sed -i "s/error_reporting = .*/error_reporting = E_ALL \& ~E_DEPRECATED \& ~E_STRICT/" $PHP_INI
 
 #copying moodle
-ADD moodle-3.3.7.tgz /var/www/html
+ADD moodle-3.5.1.tgz /var/www/html
 RUN chown -R root.www-data /var/www/html/moodle
 RUN chmod 777 /var/www/html/moodle
 RUN mkdir /var/www/moodledata
