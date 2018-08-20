@@ -1,0 +1,37 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: moodle
+  labels:
+    app: moodle
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: moodle
+  template:
+    metadata:
+      labels:
+        app: moodle
+    spec:
+      containers:
+        - image: mathcunha/moodle
+          name: moodle
+          env:
+          - name: MOODLE_DB_HOST
+            value: mysql:3306
+          - name: MOODLE_DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mysql
+                key: password
+          ports:
+            - containerPort: 80
+              name: moodle
+          volumeMounts:
+            - name: moodle-persistent-storage
+              mountPath: /var/www/moodledata
+      volumes:
+        - name: moodle-persistent-storage
+          persistentVolumeClaim:
+            claimName: moodle-volumeclaim
