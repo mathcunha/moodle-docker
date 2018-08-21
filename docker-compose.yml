@@ -5,10 +5,15 @@ moodle:
   links:
    - mysql
   restart: always
+  volumes:
+    - ./data/moodle:/var/www/moodledata
 mysql:
   image: mysql:5.7
   command: --default-authentication-plugin=mysql_native_password
   restart: always
+  volumes:
+    - ./data/mysql:/var/lib/mysql
+  command: ["--ignore-db-dir=lost+found"]
   environment:
     MYSQL_ROOT_PASSWORD: moodle-password
     MYSQL_DATABASE: moodle
